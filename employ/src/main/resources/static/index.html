@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Employee Manager — Simple UI</title>
+    <style>
+        /* ====== Basic reset ====== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+        }
+
+        body {
+            background: linear-gradient(180deg, #0f172a 0%, #071033 60%);
+            color: #e6eef8;
+            min-height: 100vh;
+            padding: 32px
+        }
+
+        /* ====== Container ====== */
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.15));
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffd166, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #04132b;
+            font-weight: 700;
+            font-size: 18px
+        }
+
+        h1 {
+            font-size: 20px
+        }
+
+        p.lead {
+            color: #bcd3f7;
+            opacity: 0.9
+        }
+
+        /* ====== Layout ====== */
+        .grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 18px
+        }
+
+        /* ====== Card / Sidebar ====== */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-radius: 12px
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0b84ff;
+            border: none;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        .btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #d8e9ff
+        }
+
+        .btn.danger {
+            background: #ff5c7c
+        }
+
+        .small {
+            padding: 8px 10px;
+            font-size: 14px
+        }
+
+        /* ====== Search & table ====== */
+        .search {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px
+        }
+
+        .search input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: inherit
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        thead th {
+            text-align: left;
+            padding: 12px 10px;
+            color: #a9c6ff;
+            font-size: 13px
+        }
+
+        tbody td {
+            padding: 12px 10px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.03);
+            font-size: 14px
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ffd166, #ff6b6b);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #04132b
+        }
+
+        /* ====== Empty state ====== */
+        .empty {
+            padding: 24px;
+            text-align: center;
+            color: #cfe2ff
+        }
+
+        /* ====== Modal ====== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px
+        }
+
+        .modal {
+            background: #071033;
+            padding: 18px;
+            border-radius: 10px;
+            min-width: 320px;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 12px 40px rgba(2, 6, 23, 0.7)
+        }
+
+        .modal h3 {
+            margin-bottom: 10px
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px
+        }
+
+        .form-row .col {
+            flex: 1
+        }
+
+        label {
+            font-size: 13px;
+            color: #cfe2ff;
+            display: block;
+            margin-bottom: 6px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: transparent;
+            color: inherit
+        }
+
+        .row-gap {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        /* ====== Responsive ====== */
+        @media (max-width:900px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .brand h1 {
+                font-size: 18px
+            }
+        }
+
+        /* ====== micro-interactions ====== */
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        tr:hover td {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02))
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <div class="brand">
+                <div class="logo">EM</div>
+                <div>
+                    <h1>Employee Manager</h1>
+                    <p class="lead">Simple, clean UI for Add / Modify / Delete / Update / Show</p>
+                </div>
+            </div>
+            <div>
+                <button class="btn small" id="addBtn">+ Add Employee</button>
+            </div>
+        </header>
+
+        <main class="grid">
+            <!-- Sidebar controls -->
+            <aside>
+                <div class="card">
+                    <h3>Actions</h3>
+                    <div class="controls" style="margin-top:12px">
+                        <button class="btn" id="addBtn2">Add Employee</button>
+                        <!-- <button class="btn secondary" id="refreshBtn">Refresh List</button> -->
+                        <!-- <button class="btn secondary" id="clearStorageBtn">Clear Stored Data</button> -->
+                    </div>
+                    <hr style="margin:12px 0;border:0;border-top:1px dashed rgba(255,255,255,0.03)">
+                    <h4>Quick tips</h4>
+                    <ul style="color:#bcd3f7;margin-top:8px;line-height:1.6">
+                        <li>Use Add to create new employee</li>
+                        <li>Edit loads the employee into the form for Update</li>
+                        <li>Delete removes permanently (stored in localStorage)</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main content: list -->
+            <section>
+                <div class="card">
+                    <div class="search">
+                        <input type="text" id="searchInput" placeholder="Search by name, email or role...">
+                        <!-- <select id="filterRole">
+                            <option value="">All Roles</option>
+                            <option>Developer</option>
+                            <option>Designer</option>
+                            <option>Manager</option>
+                            <option>HR</option>
+                        </select> -->
+                    </div>
+
+                    <div id="employeeTableWrap">
+                        <!-- Table injected by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal" role="dialog" aria-modal="true">
+            <h3 id="modalTitle">Add Employee</h3>
+            <form id="employeeForm">
+                <input type="hidden" id="empId">
+                <div class="form-row" style="margin-bottom:10px">
+                    <div class="col">
+                        <label for="name">Name</label>
+                        <input id="name" required>
+                    </div>
+                    <div class="col">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <!-- <div class="col">
+                        <label for="role">Role</label>
+                        <select id="role" required>
+                            <option value="">Select role</option>
+                            <option>Developer</option>
+                            <option>Designer</option>
+                            <option>Manager</option>
+                            <option>HR</option>
+                        </select>
+                    </div> -->
+                    <div class="col">
+                        <label for="phone">Phone</label>
+                        <input id="phone" type="tel">
+                    </div>
+                </div>
+
+                <div class="row-gap" style="justify-content:flex-end;margin-top:14px">
+                    <button type="button" class="btn secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn" id="saveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // ====== API BASE URL ======
+        const API = "http://localhost:9090/employees";
+
+        // ===== DOM REFERENCES =====
+        const modal = document.getElementById('modalBackdrop');
+        const addBtn = document.getElementById('addBtn');
+        const addBtn2 = document.getElementById('addBtn2');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const employeeForm = document.getElementById('employeeForm');
+        const employeeTableWrap = document.getElementById('employeeTableWrap');
+        const modalTitle = document.getElementById('modalTitle');
+        const empIdInput = document.getElementById('empId');
+        const searchInput = document.getElementById('searchInput');
+        const filterRole = document.getElementById('filterRole');
+
+        // ----------------- OPEN / CLOSE MODAL -----------------
+        function openModal(mode = 'add', emp = null) {
+            modal.style.display = 'flex';
+
+            if (mode === 'add') {
+                modalTitle.textContent = 'Add Employee';
+                empIdInput.value = "";
+                employeeForm.name.value = "";
+                employeeForm.email.value = "";
+                employeeForm.role.value = "";
+                employeeForm.phone.value = "";
+            } else {
+                modalTitle.textContent = 'Edit Employee';
+                empIdInput.value = emp.id;
+                employeeForm.name.value = emp.name;
+                employeeForm.email.value = emp.email;
+                employeeForm.role.value = emp.role || "";
+                employeeForm.phone.value = emp.phone || "";
+            }
+        }
+
+        function closeModal() { modal.style.display = 'none'; }
+
+
+        // ----------------- FETCH ALL EMPLOYEES -----------------
+        async function loadEmployees() {
+            const res = await fetch(API);
+            const data = await res.json();
+            renderList(data);
+        }
+
+
+        // ----------------- RENDER TABLE -----------------
+        function renderList(list) {
+            if (!list.length) {
+                employeeTableWrap.innerHTML = `<div class="empty"><p>No employees found.</p></div>`;
+                return;
+            }
+
+            let html = `
+    <table>
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Phone</th><th>Actions</th>
+      </tr></thead>
+      <tbody>`;
+
+            list.forEach(emp => {
+                html += `
+        <tr>
+            <td>${emp.name}</td>
+            <td>${emp.email}</td>
+            <td>${emp.phone || '-'}</td>
+            <td>
+                <button class="btn small" onclick="editEmployee(${emp.id})">Edit</button>
+                <button class="btn small danger" onclick="deleteEmployee(${emp.id})">Delete</button>
+            </td>
+        </tr>`;
+            });
+
+            html += "</tbody></table>";
+
+            employeeTableWrap.innerHTML = html;
+        }
+
+
+        // ----------------- CREATE / UPDATE EMPLOYEE -----------------
+        employeeForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const id = empIdInput.value;
+            const employee = {
+                name: employeeForm.name.value,
+                email: employeeForm.email.value,
+                phone: employeeForm.phone.value
+            };
+
+            if (!id) {
+                // CREATE
+                await fetch(API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(employee)
+                });
+            } else {
+                // UPDATE
+                await fetch(`${API}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(employee)
+                });
+            }
+
+            closeModal();
+            loadEmployees();
+        });
+
+
+        // ----------------- DELETE EMPLOYEE -----------------
+        async function deleteEmployee(id) {
+            if (confirm("Are you sure?"))
+                await fetch(`${API}/${id}`, { method: "DELETE" });
+
+            loadEmployees();
+        }
+
+
+        // ----------------- EDIT EMPLOYEE -----------------
+        async function editEmployee(id) {
+            const res = await fetch(`${API}/${id}`);
+            const emp = await res.json();
+            openModal('edit', emp);
+        }
+
+
+        // ----------------- EVENT LISTENERS -----------------
+        addBtn.addEventListener('click', () => openModal('add'));
+        addBtn2.addEventListener('click', () => openModal('add'));
+        cancelBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+
+        // ----------------- INITIAL LOAD -----------------
+        loadEmployees();
+    </script>
+
+</body>
+
+</html>
